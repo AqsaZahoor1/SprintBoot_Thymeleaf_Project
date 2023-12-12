@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.java.springbootthymeleaf.models.Employee;
 import com.java.springbootthymeleaf.services.EmployeeServiceImpl;
@@ -23,7 +24,7 @@ public class EmployeeController {
 	@GetMapping("/")
 	public String viewHomePage(Model model) {
 
-		getPaginated(1, model);
+		getPaginated(1,"firstName","asc", model);
 		return "index";
 	}
 
@@ -55,15 +56,22 @@ public class EmployeeController {
 		return "redirect:/";
 	}
 
+	// /page/1?sortField=name&sortDir=asc
+
 	@GetMapping("/page/{pageNo}")
-	public String getPaginated(@PathVariable(value = "pageNo") int pageNo, Model model) {
+	public String getPaginated(@PathVariable(value = "pageNo") int pageNo, @RequestParam("sortField") String sortField,
+			@RequestParam("sortDir") String sortDir, Model model) {
+
 		int pageSize = 5;
-		Page<Employee> page = employeeService.findPaginated(pageNo, pageSize);
+		Page<Employee> page = employeeService.findPaginated(pageNo, pageSize, sortField, sortDir);
 		List<Employee> employees = page.getContent();
 		model.addAttribute("totalPages", page.getTotalPages());
 		model.addAttribute("totalItems", page.getTotalElements());
 		model.addAttribute("currentPage", pageNo);
 		model.addAttribute("listEmployees", employees);
+		model.addAttribute("sortField", sortField);
+		model.addAttribute("sortDir",sortDir );
+		model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 		return "index";
 	}
 
