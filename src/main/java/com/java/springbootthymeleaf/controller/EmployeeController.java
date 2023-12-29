@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.java.springbootthymeleaf.models.Employee;
+import com.java.springbootthymeleaf.scheduler.EmployeeDataScheduler;
 import com.java.springbootthymeleaf.services.EmployeeServiceImpl;
 
 @Controller
@@ -20,12 +22,30 @@ public class EmployeeController {
 
 	@Autowired
 	EmployeeServiceImpl employeeService;
+	@Autowired
+	EmployeeDataScheduler empDataScheduler;
 
 	@GetMapping("/")
 	public String viewHomePage(Model model) {
-
-		getPaginated(1,"firstName","asc", model);
+		getPaginated(1, "firstName", "asc", model);
 		return "index";
+	}
+
+	@GetMapping("/emp_list")
+	public String viewEmployeesList(Model model) {
+
+		model.addAttribute("listEmployees", empDataScheduler.getAllEmployees());
+
+		return "employee_list";
+	}
+
+	@GetMapping("/employee_list")
+	@ResponseBody
+	public List<Employee> viewEmployeeList() {
+		// Your logic to get the updated list of employees
+		List<Employee> employees = empDataScheduler.getAllEmployees();
+
+		return employees;
 	}
 
 	@GetMapping("/showNewEmployeeForm")
@@ -70,8 +90,9 @@ public class EmployeeController {
 		model.addAttribute("currentPage", pageNo);
 		model.addAttribute("listEmployees", employees);
 		model.addAttribute("sortField", sortField);
-		model.addAttribute("sortDir",sortDir );
+		model.addAttribute("sortDir", sortDir);
 		model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+		model.addAttribute("loading", false);
 		return "index";
 	}
 

@@ -1,25 +1,12 @@
-package com.java.springbootthymeleaf.models;
+package com.java.springbootthymeleaf.dtos;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+public class UserDto {
 
-@Entity
-@Table(name = "Employees")
-public class Employee {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String firstName;
 	private String lastName;
 	private String email;
-
-	public Employee() {
-		super();
-	}
+	private String password;
 
 	public Long getId() {
 		return id;
@@ -51,6 +38,14 @@ public class Employee {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }
